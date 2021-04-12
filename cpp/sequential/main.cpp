@@ -14,8 +14,9 @@ std::string find_plaintext(std::string* vec, std::string ct, std::string salt, i
 std::atomic<bool> found(false);
 
 int main(int argc, char const *argv[]) {
-    auto start = std::chrono::high_resolution_clock::now(); 
-	
+    std::string pt;
+	if(argc > 1) pt = argv[1];
+    else pt = "parallel";
     long length = 7700016;
 	// std::string lineTmp;
 	// std::ifstream myfileTmp( "../rockyou.txt" );
@@ -45,18 +46,27 @@ int main(int argc, char const *argv[]) {
 		myfile.close();
 	}
 
-	std::string pt = "parallel";
+	// std::string pt = "parallel";
 	std::string salt = "LM";
     std::string ct = crypt(pt.c_str(), salt.c_str());
     std::cout << "Plaintext is: " << pt << " with salt: " << salt << " and cyphertext: " << ct << std::endl;
 
+    auto start = std::chrono::high_resolution_clock::now(); 
     std::string foundPt = find_plaintext( vec, ct, salt, 0, length);
     std::cout << foundPt << std::endl;
 
     auto stop = std::chrono::high_resolution_clock::now(); 
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start); 
-    double outerTime = duration.count()/(double)1000;
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start); 
+    double outerTime = duration.count()/(double)1000000;
     printf("\n%f\n",outerTime);
+    std::cout << "Plaintext is: " << foundPt << std::endl;
+
+    std::ofstream myfile1;
+    myfile1.open ("cppRes.csv", std::ios::app);
+    myfile1 << foundPt;
+    myfile1 << "," << outerTime;
+    myfile1 << "\n";
+    myfile1.close();
 
 	return 0;
 }

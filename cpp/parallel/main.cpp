@@ -9,18 +9,21 @@
 #include <thread>
 #include <atomic>
 #include <future>
+#include "rapidcsv.h"
 
 std::string find_plaintext(std::string* vec, std::string ct, std::string salt, int lower, int higher);
 std::atomic<bool> found(false);
 
 int main(int argc, char const *argv[]) {
 
-    auto start = std::chrono::high_resolution_clock::now(); 
 
     int threadNumber;
     if(argc > 1) threadNumber = atoi(argv[1]);
     else threadNumber = 8;
 
+    std::string pt;
+    if(argc > 2) pt = argv[2];
+    else pt = "parallel";
     std::thread threads[threadNumber];
 	long length = 7700016;
 	// std::string lineTmp;
@@ -51,11 +54,12 @@ int main(int argc, char const *argv[]) {
 		myfile.close();
 	}
     
-	std::string pt = "parallel";
+	// std::string pt = "123456";
 	std::string salt = "LM";
     std::string ct = crypt(pt.c_str(), salt.c_str());
     std::cout << "Plaintext is: " << pt << " with salt: " << salt << " and cyphertext: " << ct << std::endl;
 
+    auto start = std::chrono::high_resolution_clock::now(); 
     std::vector<std::future<std::string>> futures;
     int incrAmount = (int)floor(length/threadNumber);
     for (int itr = 0; itr < threadNumber; itr++){
@@ -70,12 +74,20 @@ int main(int argc, char const *argv[]) {
         tmpStr = futures[itr].get();
         if(tmpStr != "") foundPt = tmpStr;
     }
-    std::cout << foundPt << std::endl;
 
     auto stop = std::chrono::high_resolution_clock::now(); 
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start); 
-    double outerTime = duration.count()/(double)1000;
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start); 
+    double outerTime = duration.count()/(double)1000000;
+    std::cout << "Plaintext found is: " << foundPt << std::endl;
     printf("\n%f\n",outerTime);
+
+    std::ofstream myfile1;
+    myfile1.open ("parRes.csv", std::ios::app);
+    myfile1 << threadNumber;
+    myfile1 << "," << foundPt;
+    myfile1 << "," << outerTime;
+    myfile1 << "\n";
+    myfile1.close();
 
 	return 0;
 }
