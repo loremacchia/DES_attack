@@ -10,8 +10,7 @@
 #include <crypt.h>
 #include <math.h>
 
-std::string find_plaintext(std::string* vec, std::string ct, std::string salt, int lower, int higher);
-std::atomic<bool> found(false);
+std::string find_plaintext(std::string* vec, std::string ct, std::string salt);
 
 int main(int argc, char const *argv[]) {
     std::string pt;
@@ -52,7 +51,7 @@ int main(int argc, char const *argv[]) {
     std::cout << "Plaintext is: " << pt << " with salt: " << salt << " and cyphertext: " << ct << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now(); 
-    std::string foundPt = find_plaintext( vec, ct, salt, 0, length);
+    std::string foundPt = find_plaintext( vec, ct, salt);
     std::cout << foundPt << std::endl;
 
     auto stop = std::chrono::high_resolution_clock::now(); 
@@ -72,14 +71,13 @@ int main(int argc, char const *argv[]) {
 }
 
 
-std::string find_plaintext(std::string* vec, std::string ct, std::string salt, int lower, int higher){
-    int itr = lower;
-    while (itr < higher && !(found.load())) {
-        if(ct.compare(crypt((vec[itr]).c_str(),salt.c_str())) == 0){
-			found = true;
-            return (vec[itr]).c_str();
+std::string find_plaintext(std::string* vec, std::string ct, std::string salt){
+    int i = 0;
+    while (i < vec->length()) {
+        if(ct.compare(crypt((vec[i]).c_str(),salt.c_str())) == 0){
+            return (vec[i]).c_str();
         }
-        itr++;
+        i++;
     }
     return "";
 } 

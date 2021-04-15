@@ -101,8 +101,10 @@ std::string find_plaintext(std::string* vec, std::string ct, std::string salt, i
     while (itr < higher && !(found.load())) {
         if(ct.compare(crypt_r((vec[itr]).c_str(),salt.c_str(), &data)) == 0){
             // std::cout << (vec[itr]) << std::endl;
-			found = true;
-            return (vec[itr]).c_str();
+			if(!(found.load())){
+                found.store(true);
+                return (vec[itr]).c_str();
+            }
         }
         itr++;
     }    
