@@ -1,5 +1,5 @@
 g++ main.cpp -pthread -lcrypt -o mainCpp
-StringVal="parallel 123456 hawker1 ac3127 mritaly"
+StringVal="123456 parallel hawker1 ac3127 mritaly"
 
 for val in $StringVal; do   
     for thread in {1..5}
