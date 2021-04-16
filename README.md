@@ -4,7 +4,7 @@
 DES is an encryption algorithm based on substitution. In this repository we show three different attacks to this algorithm:
 * Known ciphertext and chosen plaintext: attack using a set of frequently used passwords `rockyou.txt` that has to be downloaded from https://www.kaggle.com/wjburns/common-password-list-rockyoutxt/version/1;
 * Known ciphertext and chosen plaintext: attack bruteforcing all the possible passwords;
-* known ciphertext: briteforce over the keys to decrypt the ciphertext, the obtained plaintext is chosen as correct if it has a reasonable low distance from a frequent password of `rockyou.txt`.
+* known ciphertext: bruteforce over the keys to decrypt the ciphertext, the obtained plaintext is chosen as correct if it has a reasonable low distance from a frequent password of `rockyou.txt`.
 
 ## Implementation
 The first attack is implemented both in Java and in C++, while the second and the third only in Java. All those implementations include a parallelized version respectively with C++ Threads and Java Threads.
